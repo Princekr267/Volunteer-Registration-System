@@ -1,4 +1,16 @@
-const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const getBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl) {
+    return '/api';
+  }
+  const cleanUrl = envUrl.endsWith('/') ? envUrl.slice(0, -1) : envUrl;
+  if (!cleanUrl.endsWith('/api')) {
+    return `${cleanUrl}/api`;
+  }
+  return cleanUrl;
+};
+
+const BASE_URL = getBaseUrl();
 
 interface RequestOptions extends RequestInit {
   body?: any;
