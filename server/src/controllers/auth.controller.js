@@ -2,17 +2,17 @@ import User from '../models/User.js';
 import VolunteerProfile from '../models/VolunteerProfile.js';
 import jwt from 'jsonwebtoken';
 
-const generateToken = (res, userId) => {
+const generateToken = (req, res, userId) => {
   const token = jwt.sign({ id: userId }, process.env.JWT_SECRET || 'super_secret_key_for_volunteer_registration_system_123!@#', {
     expiresIn: '30d'
   });
 
-  const isProd = process.env.NODE_ENV === 'production';
+  const isSecure = req.secure || req.headers['x-forwarded-proto'] === 'https' || process.env.NODE_ENV === 'production';
 
   res.cookie('token', token, {
     httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? 'none' : 'lax',
+    secure: isSecure,
+    sameSite: isSecure ? 'none' : 'lax',
     maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
   });
 };
@@ -37,7 +37,7 @@ export const registerUser = async (req, res) => {
       await VolunteerProfile.create({ user: user._id });
     }
 
-    generateToken(res, user._id);
+    generateToken(req, res, user._id);
 
     res.status(201).json({
       _id: user._id,
@@ -56,7 +56,7 @@ export const loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ email: email.toLowerCase() });
     if (user && (await user.comparePassword(password))) {
-      generateToken(res, user._id);
+      generateToken(req, res, user._id);
       res.json({
         _id: user._id,
         email: user.email,
@@ -72,12 +72,12 @@ export const loginUser = async (req, res) => {
 };
 
 export const logoutUser = (req, res) => {
-  const isProd = process.env.NODE_ENV === 'production';
+  const isSecure = req.secure || req.headers['x-forwarded-proto'] === 'https' || process.env.NODE_ENV === 'production';
   res.cookie('token', '', {
     httpOnly: true,
     expires: new Date(0),
-    secure: isProd,
-    sameSite: isProd ? 'none' : 'lax'
+    secure: isSecure,
+    sameSite: isSecure ? 'none' : 'lax'
   });
   res.json({ message: 'Logged out successfully' });
 };
