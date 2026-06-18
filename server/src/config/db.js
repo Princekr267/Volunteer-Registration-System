@@ -1,10 +1,16 @@
 import mongoose from 'mongoose';
 import Opportunity from '../models/Opportunity.js';
 
+let isConnected = false;
+
 const connectDB = async () => {
+  if (isConnected || mongoose.connection.readyState >= 1) {
+    return;
+  }
   try {
     const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/volunteer_db';
     const conn = await mongoose.connect(mongoURI);
+    isConnected = true;
     console.log(`MongoDB Connected: ${conn.connection.host}`);
 
     // Seed default opportunities if database is empty
