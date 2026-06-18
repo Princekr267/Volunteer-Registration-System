@@ -252,9 +252,9 @@ const AdminDashboard: React.FC = () => {
   };
 
   // Metrics Calculations
-  const totalVolunteers = volunteers.length;
-  const pendingApprovals = volunteers.filter(v => v.status === 'pending').length;
-  const activeOpps = opportunities.filter(o => o.status === 'active').length;
+  const totalVolunteers = (volunteers || []).length;
+  const pendingApprovals = (volunteers || []).filter(v => v.status === 'pending').length;
+  const activeOpps = (opportunities || []).filter(o => o.status === 'active').length;
 
   // Render SVG Chart Data (Registered volunteers per active event)
   const chartData: ChartData[] = opportunities
@@ -567,7 +567,7 @@ const AdminDashboard: React.FC = () => {
       {/* Registrants / Logged Hours Verification Modal */}
       <Modal isOpen={isRegModalOpen} onClose={() => setIsRegModalOpen(false)} title={`Registrations: ${activeOppForRegs?.title || ''}`}>
         <div className="table-container" style={{ maxHeight: '350px', overflowY: 'auto', marginTop: 0 }}>
-          {registrations.length === 0 ? (
+          {!registrations || registrations.length === 0 ? (
             <div style={{ padding: '2rem', textAlign: 'center', color: '#9CA3AF' }}>No registrations for this event.</div>
           ) : (
             <table className="custom-table" style={{ fontSize: '0.85rem' }}>

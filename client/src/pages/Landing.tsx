@@ -128,7 +128,7 @@ const Landing: React.FC = () => {
           <div style={{ textAlign: 'center', padding: '3rem', color: '#9CA3AF' }}>
             Searching for active events...
           </div>
-        ) : opportunities.length === 0 ? (
+        ) : !opportunities || opportunities.length === 0 ? (
           <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center', color: '#9CA3AF' }}>
             No active opportunities found. Check back later or create one as an admin!
           </div>

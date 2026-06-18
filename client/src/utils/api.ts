@@ -30,14 +30,18 @@ async function request(path: string, options: RequestOptions = {}) {
 
   const response = await fetch(url, options);
 
-  const contentType = response.headers.get('Content-Type');
-  if (contentType && contentType.includes('text/csv')) {
+  const contentType = response.headers.get('Content-Type') || '';
+  if (contentType.includes('text/csv')) {
     return response.blob();
+  }
+
+  if (!contentType.includes('application/json')) {
+    throw new Error('Server returned invalid response format');
   }
 
   const data = await response.json().catch(() => null);
 
-  if (!response.ok) {
+  if (data === null || !response.ok) {
     throw new Error(data?.message || 'Something went wrong');
   }
 

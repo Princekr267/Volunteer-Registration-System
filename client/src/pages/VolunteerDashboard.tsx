@@ -141,11 +141,11 @@ const VolunteerDashboard: React.FC = () => {
   };
 
   // Calculations for Badges & Achievements
-  const totalHours = registrations
+  const totalHours = (registrations || [])
     .filter(r => r.status === 'attended')
     .reduce((sum, r) => sum + r.loggedHours, 0);
 
-  const totalEventsAttended = registrations.filter(r => r.status === 'attended').length;
+  const totalEventsAttended = (registrations || []).filter(r => r.status === 'attended').length;
 
   const getBadgeDetails = (hours: number) => {
     if (hours >= 25) {
@@ -248,7 +248,7 @@ const VolunteerDashboard: React.FC = () => {
                 <h3 className="section-title" style={{ marginBottom: '1rem', fontSize: '1.4rem' }}>
                   <CalendarDays size={20} color="#6366F1" /> Registered Events
                 </h3>
-                {registrations.length === 0 ? (
+                {!registrations || registrations.length === 0 ? (
                   <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center', color: '#9CA3AF' }}>
                     You haven't signed up for any events yet. Visit the "Browse Events" tab to join!
                   </div>
@@ -423,7 +423,7 @@ const VolunteerDashboard: React.FC = () => {
                 <h3 className="section-title" style={{ marginBottom: '1.5rem', fontSize: '1.4rem' }}>
                   <ListPlus size={20} color="#6366F1" /> Available Opportunities
                 </h3>
-                {opportunities.length === 0 ? (
+                {!opportunities || opportunities.length === 0 ? (
                   <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center', color: '#9CA3AF' }}>
                     No active opportunities available right now.
                   </div>
